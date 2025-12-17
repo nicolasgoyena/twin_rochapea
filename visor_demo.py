@@ -16,8 +16,8 @@ import numpy as np
 GPKG_PATH = "parcelas_rochapea_completas.gpkg"
 LAYER_NAME = "parcelas_rochapea"
 
-ZONAS_VERDES_PATH = r"C:/Users/ngoyenaserv/Desktop/TwIN_Datos/simulacion_zonas_verdes_rochapea_RECUPERADA.shp"
-ARBOLES_PATH = r"C:/Users/ngoyenaserv/Desktop/TwIN_Datos/arboles_propuestos.shp"
+ZONAS_VERDES_PATH = "simulacion_zonas_verdes_rochapea_RECUPERADA.shp"
+ARBOLES_PATH = "arboles_propuestos.shp"
 
 MAP_CRS = 4326
 
@@ -356,3 +356,4 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
