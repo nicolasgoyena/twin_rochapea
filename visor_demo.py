@@ -22,8 +22,8 @@ MAP_CRS = 4326
 
 # Rangos fijos
 RANGO_REDICCION_CONTAMINACION = (0.0, 20.0)
-RANGO_INDICE_VULNERABILIDAD = (0.0, 100.0)
 RANGO_REDICCION_VULNERABILIDAD = (0.0, 60.0)
+RANGO_INDICE_VULNERABILIDAD = (0.0, 100.0)
 
 st.set_page_config(layout="wide")
 st.title("Visor urbano – Rochapea")
@@ -88,7 +88,11 @@ if modo == "Simulación de escenarios":
             ["Invierno", "Primavera", "Verano", "Otoño"]
         )
 
-    st.sidebar.caption("Escala fija común para todas las estaciones y escenarios")
+    # 👉 NUEVO: ajuste manual opcional
+    ajustar_rango = st.sidebar.checkbox(
+        "Ajustar escala manualmente",
+        value=False
+    )
 
     # =========================
     # SELECCIÓN DE COLUMNA
@@ -114,11 +118,11 @@ if modo == "Simulación de escenarios":
         num = mapa[estacion][0] if escenario == "Ideal" else mapa[estacion][1]
         col = f"ESCENARIO {num}: Porcentaje de reducción del índice de Vulnerabilidad en {estacion} en el escenario {escenario} (0-100)"
 
-    else:  # Índice de Vulnerabilidad Ideal / Prioritario
+    else:
         col = f"Índice de Vulnerabilidad en {estacion} en el escenario {escenario} (0-100)"
 
     # =========================
-    # RANGO FIJO
+    # RANGO BASE (FIJO)
     # =========================
     if variable == "Reducción del índice de contaminación (ICC)":
         vmin, vmax = RANGO_REDICCION_CONTAMINACION
@@ -127,6 +131,31 @@ if modo == "Simulación de escenarios":
     else:
         vmin, vmax = RANGO_INDICE_VULNERABILIDAD
 
+    # =========================
+    # AJUSTE MANUAL OPCIONAL
+    # =========================
+    if ajustar_rango:
+        st.sidebar.markdown("**Escala manual**")
+
+        vmin = st.sidebar.number_input(
+            "Valor mínimo",
+            min_value=0.0,
+            max_value=100.0,
+            value=vmin,
+            step=1.0
+        )
+
+        vmax = st.sidebar.number_input(
+            "Valor máximo",
+            min_value=0.0,
+            max_value=100.0,
+            value=vmax,
+            step=1.0
+        )
+
+        if vmin >= vmax:
+            st.sidebar.error("El valor mínimo debe ser menor que el máximo")
+            st.stop()
 
     # =========================
     # COLORMAP
@@ -176,7 +205,9 @@ if modo == "Simulación de escenarios":
         tooltip=folium.GeoJsonTooltip(fields=[col], localize=True)
     ).add_to(m)
 
-    # Vegetación
+    # =========================
+    # VEGETACIÓN
+    # =========================
     if escenario == "Ideal":
         zonas_plot, arboles_plot = zonas_verdes, arboles
     elif escenario == "Prioritario":
@@ -221,4 +252,3 @@ if modo == "Simulación de escenarios":
 # MOSTRAR MAPA
 # =========================
 st_folium(m, width=1200, height=650, returned_objects=[])
-
