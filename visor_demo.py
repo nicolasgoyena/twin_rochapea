@@ -43,6 +43,16 @@ REDUCCION_VULNERABILIDAD_COLS = {
         "Otoño": "ESCENARIO 10: Porcentaje de reducción del índice de Vulnerabilidad en Otoño con Vegetación Prioritaria respecto a la Vegetación Actual",
     }
 }
+# =========================
+# MAPEO ICC – ESCENARIO ACTUAL
+# =========================
+ICC_ACTUAL_COLS = {
+    "Invierno": "ICC en Invierno (0-100)",
+    "Primavera": "ICC en Primavera (0-100)",
+    "Verano": "ICC en Verano (0-100)",
+    "Otoño": "ICC en Otoño (0-100)",
+    "Media anual": "ICC Media Anual (0-100)"
+}
 
 
 st.set_page_config(layout="wide")
@@ -89,8 +99,12 @@ if modo == "Simulación de escenarios":
     if escenario == "Actual":
         variable = st.sidebar.selectbox(
             "Variable",
-            ["Índice de Vulnerabilidad"]
+            [
+                "Índice de Vulnerabilidad",
+                "Índice de contaminación (ICC)"
+            ]
         )
+
     else:
         variable = st.sidebar.selectbox(
             "Variable",
@@ -102,11 +116,16 @@ if modo == "Simulación de escenarios":
         )
 
     estacion = None
-    if variable in ["Índice de Vulnerabilidad", "Reducción del índice de Vulnerabilidad"]:
+    if variable in [
+        "Índice de Vulnerabilidad",
+        "Reducción del índice de Vulnerabilidad",
+        "Índice de contaminación (ICC)"
+    ]:
         estacion = st.sidebar.selectbox(
             "Estación",
-            ["Invierno", "Primavera", "Verano", "Otoño"]
+            ["Invierno", "Primavera", "Verano", "Otoño", "Media anual"]
         )
+
 
     # 👉 NUEVO: ajuste manual opcional
     ajustar_rango = st.sidebar.checkbox(
@@ -117,7 +136,10 @@ if modo == "Simulación de escenarios":
     # =========================
     # SELECCIÓN DE COLUMNA
     # =========================
-    if escenario == "Actual":
+    if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
+        col = ICC_ACTUAL_COLS[estacion]
+
+    elif escenario == "Actual":
         col = f"Índice de Vulnerabilidad en {estacion} en el escenario Actual (0-100)"
 
     elif variable == "Reducción del índice de contaminación (ICC)":
@@ -289,6 +311,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
