@@ -162,7 +162,7 @@ if modo == "Simulación de escenarios":
     # =========================
     if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
         # ICC actual → escala fija 0–60
-        vmin, vmax = 0.0, 60.0
+        vmin, vmax = 0.0, 50.0
     
     elif variable == "Reducción del índice de contaminación (ICC)":
         vmin, vmax = RANGO_REDICCION_CONTAMINACION
@@ -319,6 +319,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
