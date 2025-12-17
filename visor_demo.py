@@ -257,13 +257,19 @@ if modo == "Simulación de escenarios":
                 )
             )
         fg.add_to(m)
-
-    colormap.caption = col
     colormap.add_to(m)
     folium.LayerControl(collapsed=False).add_to(m)
 
 # =========================
-# MOSTRAR MAPA
+# MOSTRAR TÍTULO + MAPA
 # =========================
-st_folium(m, width=1200, height=650, returned_objects=[])
+st.markdown(f"### {col}")
+
+st_folium(
+    m,
+    width=1200,
+    height=650,
+    returned_objects=[]
+)
+
 
