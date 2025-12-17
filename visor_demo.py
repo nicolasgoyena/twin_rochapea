@@ -25,6 +25,26 @@ RANGO_REDICCION_CONTAMINACION = (0.0, 20.0)
 RANGO_REDICCION_VULNERABILIDAD = (0.0, 60.0)
 RANGO_INDICE_VULNERABILIDAD = (0.0, 100.0)
 
+# =========================
+# MAPEO DE COLUMNAS – REDUCCIÓN ÍNDICE DE VULNERABILIDAD
+# =========================
+
+REDUCCION_VULNERABILIDAD_COLS = {
+    "Ideal": {
+        "Invierno": "ESCENARIO 3: Porcentaje de reducción del índice de Vulnerabilidad en Invierno con Vegetación Ideal respecto a la Vegetación Actual",
+        "Primavera": "ESCENARIO 5: Porcentaje de reducción del índice de Vulnerabilidad en Primavera con Vegetación Ideal respecto a la Vegetación Actual",
+        "Verano": "ESCENARIO 7: Porcentaje de reducción del índice de Vulnerabilidad en Verano con Vegetación Ideal respecto a la Vegetación Actual",
+        "Otoño": "ESCENARIO 9: Porcentaje de reducción del índice de Vulnerabilidad en Otoño con Vegetación Ideal respecto a la Vegetación Actual",
+    },
+    "Prioritario": {
+        "Invierno": "ESCENARIO 4: Porcentaje de reducción del índice de Vulnerabilidad en Invierno con Vegetación Prioritaria respecto a la Vegetación Actual",
+        "Primavera": "ESCENARIO 6: Porcentaje de reducción del índice de Vulnerabilidad en Primavera con Vegetación Prioritaria respecto a la Vegetación Actual",
+        "Verano": "ESCENARIO 8: Porcentaje de reducción del índice de Vulnerabilidad en Verano con Vegetación Prioritaria respecto a la Vegetación Actual",
+        "Otoño": "ESCENARIO 10: Porcentaje de reducción del índice de Vulnerabilidad en Otoño con Vegetación Prioritaria respecto a la Vegetación Actual",
+    }
+}
+
+
 st.set_page_config(layout="wide")
 st.title("Visor urbano – Rochapea")
 
@@ -109,14 +129,8 @@ if modo == "Simulación de escenarios":
         )
 
     elif variable == "Reducción del índice de Vulnerabilidad":
-        mapa = {
-            "Invierno": ("3", "4"),
-            "Primavera": ("5", "6"),
-            "Verano": ("7", "8"),
-            "Otoño": ("9", "10")
-        }
-        num = mapa[estacion][0] if escenario == "Ideal" else mapa[estacion][1]
-        col = f"ESCENARIO {num}: Porcentaje de reducción del índice de Vulnerabilidad en {estacion} en el escenario {escenario} (0-100)"
+        col = REDUCCION_VULNERABILIDAD_COLS[escenario][estacion]
+
 
     else:
         col = f"Índice de Vulnerabilidad en {estacion} en el escenario {escenario} (0-100)"
@@ -252,3 +266,4 @@ if modo == "Simulación de escenarios":
 # MOSTRAR MAPA
 # =========================
 st_folium(m, width=1200, height=650, returned_objects=[])
+
