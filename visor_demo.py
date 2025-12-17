@@ -160,12 +160,20 @@ if modo == "Simulación de escenarios":
     # =========================
     # RANGO BASE (FIJO)
     # =========================
-    if variable == "Reducción del índice de contaminación (ICC)":
+    if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
+        # ICC actual → escala fija 0–60
+        vmin, vmax = 0.0, 60.0
+    
+    elif variable == "Reducción del índice de contaminación (ICC)":
         vmin, vmax = RANGO_REDICCION_CONTAMINACION
+    
     elif variable == "Reducción del índice de Vulnerabilidad":
         vmin, vmax = RANGO_REDICCION_VULNERABILIDAD
+    
     else:
+        # Índice de Vulnerabilidad (Actual / Ideal / Prioritario)
         vmin, vmax = RANGO_INDICE_VULNERABILIDAD
+    
 
     # =========================
     # AJUSTE MANUAL OPCIONAL
@@ -311,6 +319,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
