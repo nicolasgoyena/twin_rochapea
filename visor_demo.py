@@ -116,15 +116,26 @@ if modo == "Simulación de escenarios":
         )
 
     estacion = None
+    # =========================
+    # SELECTOR DE ESTACIÓN
+    # =========================
     if variable in [
         "Índice de Vulnerabilidad",
-        "Reducción del índice de Vulnerabilidad",
-        "Índice de contaminación (ICC)"
+        "Reducción del índice de Vulnerabilidad"
     ]:
+        # Vulnerabilidad → SIN media anual
+        estacion = st.sidebar.selectbox(
+            "Estación",
+            ["Invierno", "Primavera", "Verano", "Otoño"]
+        )
+    
+    elif variable == "Índice de contaminación (ICC)":
+        # ICC → CON media anual
         estacion = st.sidebar.selectbox(
             "Estación",
             ["Invierno", "Primavera", "Verano", "Otoño", "Media anual"]
         )
+
 
 
     # 👉 NUEVO: ajuste manual opcional
@@ -328,6 +339,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
