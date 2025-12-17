@@ -175,11 +175,29 @@ if modo == "Simulación de escenarios":
     # COLORMAP
     # =========================
     if variable == "Índice de Vulnerabilidad":
-        colormap = cm.LinearColormap(cm.linear.Reds_09.colors, vmin=vmin, vmax=vmax)
+        # Índice (más alto = peor) → rojos
+        colormap = cm.LinearColormap(
+            cm.linear.Reds_09.colors,
+            vmin=vmin,
+            vmax=vmax
+        )
+    
     elif variable == "Reducción del índice de Vulnerabilidad":
-        colormap = cm.LinearColormap(cm.linear.Oranges_09.colors, vmin=vmin, vmax=vmax)
-    else:
-        colormap = cm.LinearColormap(cm.linear.Greens_09.colors, vmin=vmin, vmax=vmax)
+        # Reducción (más alto = mejor) → verdes
+        colormap = cm.LinearColormap(
+            cm.linear.Greens_09.colors,
+            vmin=vmin,
+            vmax=vmax
+        )
+    
+    else:  # Reducción del ICC
+        # Reducción (más alto = mejor) → verdes
+        colormap = cm.LinearColormap(
+            cm.linear.Greens_09.colors,
+            vmin=vmin,
+            vmax=vmax
+        )
+    
 
     # =========================
     # MAPA
@@ -271,6 +289,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
