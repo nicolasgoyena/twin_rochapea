@@ -88,7 +88,7 @@ if modo == "Simulación de escenarios":
             ["Invierno", "Primavera", "Verano", "Otoño"]
         )
 
-    range_mode = st.sidebar.radio("Rango", ["Automático", "Manual"])
+    st.sidebar.caption("Escala fija común para todas las estaciones y escenarios")
 
     # =========================
     # SELECCIÓN DE COLUMNA
@@ -127,9 +127,6 @@ if modo == "Simulación de escenarios":
     else:
         vmin, vmax = RANGO_INDICE_VULNERABILIDAD
 
-    if range_mode == "Manual":
-        vmin = st.sidebar.number_input("Valor mínimo", 0.0, 100.0, vmin)
-        vmax = st.sidebar.number_input("Valor máximo", 0.0, 100.0, vmax)
 
     # =========================
     # COLORMAP
@@ -224,3 +221,4 @@ if modo == "Simulación de escenarios":
 # MOSTRAR MAPA
 # =========================
 st_folium(m, width=1200, height=650, returned_objects=[])
+
