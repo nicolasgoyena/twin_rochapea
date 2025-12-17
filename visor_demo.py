@@ -22,7 +22,7 @@ MAP_CRS = 4326
 
 # Rangos fijos
 RANGO_REDICCION_CONTAMINACION = (0.0, 20.0)
-RANGO_REDICCION_VULNERABILIDAD = (0.0, 60.0)
+RANGO_REDICCION_VULNERABILIDAD = (0.0, 25.0)
 RANGO_INDICE_VULNERABILIDAD = (0.0, 100.0)
 
 # =========================
@@ -271,5 +271,6 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
