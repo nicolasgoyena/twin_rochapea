@@ -204,8 +204,16 @@ if modo == "Simulación de escenarios":
     # =========================
     # COLORMAP
     # =========================
-    if variable == "Índice de Vulnerabilidad":
-        # Índice (más alto = peor) → rojos
+    if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
+        # ICC actual → contaminación (más = peor)
+        colormap = cm.LinearColormap(
+            cm.linear.Reds_09.colors,
+            vmin=vmin,
+            vmax=vmax
+        )
+    
+    elif variable == "Índice de Vulnerabilidad":
+        # Vulnerabilidad (más = peor)
         colormap = cm.LinearColormap(
             cm.linear.Reds_09.colors,
             vmin=vmin,
@@ -213,20 +221,21 @@ if modo == "Simulación de escenarios":
         )
     
     elif variable == "Reducción del índice de Vulnerabilidad":
-        # Reducción (más alto = mejor) → verdes
+        # Reducción (más = mejor)
         colormap = cm.LinearColormap(
             cm.linear.Greens_09.colors,
             vmin=vmin,
             vmax=vmax
         )
     
-    else:  # Reducción del ICC
-        # Reducción (más alto = mejor) → verdes
+    else:
+        # Reducción del ICC (más = mejor)
         colormap = cm.LinearColormap(
             cm.linear.Greens_09.colors,
             vmin=vmin,
             vmax=vmax
         )
+
     
 
     # =========================
@@ -319,6 +328,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
