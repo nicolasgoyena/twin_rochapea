@@ -1,9 +1,11 @@
 streamlit
 streamlit-folium
 geopandas
-folium
+folium>=0.12
 branca
 numpy
 pyproj
 shapely
 fiona
+matplotlib
+mapclassify
