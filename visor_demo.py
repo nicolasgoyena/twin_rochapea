@@ -494,7 +494,7 @@ else:
         folium.TileLayer(
             tiles="about:blank",
             attr=" ",
-            name="Sin mapa base (gris claro)",
+            name="Sin mapa base",
             overlay=False,
             control=True,
             show=True
@@ -560,6 +560,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
