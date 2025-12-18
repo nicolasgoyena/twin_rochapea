@@ -143,6 +143,17 @@ def load_vegetation():
     zonas = gpd.read_file(ZONAS_VERDES_PATH).to_crs(epsg=MAP_CRS)
     arboles = gpd.read_file(ARBOLES_PATH).to_crs(epsg=MAP_CRS)
     return zonas, arboles
+    
+@st.cache_data
+def load_icc_raster(raster_path):
+    import rasterio
+    with rasterio.open(raster_path) as src:
+        data = src.read(1)
+        transform = src.transform
+        crs = src.crs
+        height = src.height
+        width = src.width
+    return data, transform, crs, height, width
 
 gdf = load_data()
 zonas_verdes, arboles = load_vegetation()
@@ -632,29 +643,34 @@ if modo == "Simulación de escenarios":
         raster_path = ICC_RASTERS.get(estacion)
     
         if raster_path is not None:
-            with rasterio.open(raster_path) as src:
-                # transformar lat/lon → CRS del raster
-                xs, ys = transform(
-                    "EPSG:4326",
-                    src.crs,
-                    [lon],
-                    [lat]
-                )
-    
-                row, col = src.index(xs[0], ys[0])
-    
-                if 0 <= row < src.height and 0 <= col < src.width:
-                    value = src.read(1)[row, col]
-    
-                    if np.isfinite(value):
-                        with col_info:
-                            st.success(
-                                f"📍 **ICC a nivel de calle**\n\n"
-                                f"**Estación:** {estacion}\n\n"
-                                f"**Valor ICC:** {value:.2f}"
-                            )
-                    else:
+            data, raster_transform, raster_crs, height, width = load_icc_raster(raster_path)
+            xs, ys = transform(
+                "EPSG:4326",
+                raster_crs,
+                [lon],
+                [lat]
+            )
+            
+            row, col = rasterio.transform.rowcol(
+                raster_transform,
+                xs[0],
+                ys[0]
+            )
+            
+            if 0 <= row < height and 0 <= col < width:
+                value = data[row, col]
+            
+                if np.isfinite(value):
+                    with col_info:
+                        st.success(
+                            f"📍 **ICC a nivel de calle**\n\n"
+                            f"**Estación:** {estacion}\n\n"
+                            f"**Valor ICC:** {value:.2f}"
+                        )
+                else:
+                    with col_info:
                         st.warning("No hay valor ICC en este punto.")
+
     
 
 
@@ -791,6 +807,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
