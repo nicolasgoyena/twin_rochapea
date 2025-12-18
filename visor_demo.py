@@ -418,11 +418,6 @@ if modo == "Simulación de escenarios":
 else:
 
     st.sidebar.header("DEMOGRAFÍA Y CATASTRO")
-    base_map = st.sidebar.selectbox(
-        "Mapa base",
-        ["OpenStreetMap", "CartoDB Positron", "Sin mapa base"]
-    )
-
 
     demog_vars = {
         "Número de viviendas": "NViviendas",
@@ -551,6 +546,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
