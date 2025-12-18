@@ -486,11 +486,16 @@ else:
         # MAPAS BASE (igual que escenarios)
         # =========================
         folium.TileLayer(
-            tiles="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=",
+            tiles=(
+                "data:image/png;base64,"
+                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNg"
+                "+P///wAAAwIB/2X6cQAAAABJRU5ErkJggg=="
+            ),
             attr=" ",
-            name="Sin mapa base",
+            name="Sin mapa base (gris claro)",
             overlay=False
         ).add_to(m)
+
     
         folium.TileLayer(
             "cartodbpositron",
@@ -537,6 +542,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
