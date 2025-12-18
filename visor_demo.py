@@ -387,21 +387,23 @@ if modo == "Simulación de escenarios":
     folium.LayerControl(collapsed=False).add_to(m)
 
 # =========================
-# MOSTRAR TÍTULO + MAPA
+# TÍTULO Y TEXTO EXPLICATIVO (solo escenarios)
 # =========================
-st.markdown(f"### {col}")
+if modo == "Simulación de escenarios":
+    st.markdown(f"### {col}")
 
-if variable == "Índice de Vulnerabilidad":
-    st.info(TEXTO_VULNERABILIDAD)
+    if variable == "Índice de Vulnerabilidad":
+        st.info(TEXTO_VULNERABILIDAD)
 
-elif variable == "Índice de contaminación (ICC)":
-    st.info(TEXTO_ICC)
+    elif variable == "Índice de contaminación (ICC)":
+        st.info(TEXTO_ICC)
 
-elif variable == "Reducción del índice de Vulnerabilidad":
-    st.info(TEXTO_REDUCCION_VULNERABILIDAD)
+    elif variable == "Reducción del índice de Vulnerabilidad":
+        st.info(TEXTO_REDUCCION_VULNERABILIDAD)
 
-elif variable == "Reducción del índice de contaminación (ICC)":
-    st.info(TEXTO_REDUCCION_ICC)
+    elif variable == "Reducción del índice de contaminación (ICC)":
+        st.info(TEXTO_REDUCCION_ICC)
+
 
 
 st_folium(
@@ -410,6 +412,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
