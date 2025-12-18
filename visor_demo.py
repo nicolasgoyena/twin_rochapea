@@ -202,9 +202,11 @@ if modo == "Simulación de escenarios":
             "Variable",
             [
                 "Índice de Vulnerabilidad",
-                "Índice de contaminación (ICC)"
+                "Índice de contaminación (ICC)",
+                "ICC a nivel de calle"
             ]
         )
+
 
     else:
         variable = st.sidebar.selectbox(
@@ -230,8 +232,7 @@ if modo == "Simulación de escenarios":
             ["Invierno", "Primavera", "Verano", "Otoño"]
         )
     
-    elif variable == "Índice de contaminación (ICC)":
-        # ICC → CON media anual
+    elif variable in ["Índice de contaminación (ICC)", "ICC a nivel de calle"]:
         estacion = st.sidebar.selectbox(
             "Estación",
             ["Invierno", "Primavera", "Verano", "Otoño", "Media anual"]
@@ -595,16 +596,14 @@ else:
                 "fillOpacity": 0.8,
             }
 
-        folium.GeoJson(
-            gdf,
-            name="Parcelas",
-            style_function=style_function,
-            tooltip=folium.GeoJsonTooltip(
-                fields=["USO", col],
-                aliases=["Tipología del edificio", var_label],
-                localize=True
-            )
-        ).add_to(m)
+        if not (escenario == "Actual" and variable == "ICC a nivel de calle"):
+            folium.GeoJson(
+                gdf,
+                name="Parcelas",
+                style_function=style_function,
+                tooltip=folium.GeoJsonTooltip(fields=[col], localize=True)
+            ).add_to(m)
+
 
         colormap.add_to(m)
         folium.LayerControl(collapsed=False).add_to(m)
@@ -618,6 +617,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
