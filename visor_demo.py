@@ -483,14 +483,12 @@ else:
         )
 
         folium.TileLayer(
-            tiles="",
-            attr="",
+            tiles="about:blank",
+            attr=" ",
             name="Sin mapa base (gris claro)",
             overlay=False,
             control=True,
-            show=True,
-            max_zoom=22,
-            min_zoom=0
+            show=True
         ).add_to(m)
         
         m.get_root().html.add_child(
@@ -505,6 +503,7 @@ else:
             )
         )
         
+                
 
     
         folium.TileLayer(
@@ -552,6 +551,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
