@@ -396,37 +396,42 @@ if modo == "Simulación de escenarios":
     # =========================
     # COLORMAP
     # =========================
-    if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
-        # ICC actual → contaminación (más = peor)
-        colormap = cm.LinearColormap(
-            cm.linear.Reds_09.colors,
-            vmin=vmin,
-            vmax=vmax
-        )
+    colormap = None
     
-    elif variable == "Índice de Vulnerabilidad":
-        # Vulnerabilidad (más = peor)
-        colormap = cm.LinearColormap(
-            cm.linear.Reds_09.colors,
-            vmin=vmin,
-            vmax=vmax
-        )
+    if variable != "ICC a nivel de calle":
     
-    elif variable == "Reducción del índice de Vulnerabilidad":
-        # Reducción (más = mejor)
-        colormap = cm.LinearColormap(
-            cm.linear.Greens_09.colors,
-            vmin=vmin,
-            vmax=vmax
-        )
+        if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
+            # ICC actual → contaminación (más = peor)
+            colormap = cm.LinearColormap(
+                cm.linear.Reds_09.colors,
+                vmin=vmin,
+                vmax=vmax
+            )
     
-    else:
-        # Reducción del ICC (más = mejor)
-        colormap = cm.LinearColormap(
-            cm.linear.Greens_09.colors,
-            vmin=vmin,
-            vmax=vmax
-        )
+        elif variable == "Índice de Vulnerabilidad":
+            # Vulnerabilidad (más = peor)
+            colormap = cm.LinearColormap(
+                cm.linear.Reds_09.colors,
+                vmin=vmin,
+                vmax=vmax
+            )
+    
+        elif variable == "Reducción del índice de Vulnerabilidad":
+            # Reducción (más = mejor)
+            colormap = cm.LinearColormap(
+                cm.linear.Greens_09.colors,
+                vmin=vmin,
+                vmax=vmax
+            )
+    
+        else:
+            # Reducción del ICC (más = mejor)
+            colormap = cm.LinearColormap(
+                cm.linear.Greens_09.colors,
+                vmin=vmin,
+                vmax=vmax
+            )
+
 
     
 
@@ -733,6 +738,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
