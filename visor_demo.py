@@ -147,43 +147,50 @@ def load_vegetation():
 gdf = load_data()
 zonas_verdes, arboles = load_vegetation()
 
-def add_raster_layer(m, raster_path, name, opacity=0.75):
+def add_raster_layer(m, raster_path, name, opacity=0.7):
+
+    import rasterio
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from matplotlib import cm
+    from matplotlib.colors import Normalize
+    from rasterio.plot import reshape_as_image
+    import tempfile
+    import os
 
     with rasterio.open(raster_path) as src:
-        data = src.read(1)
+        data = src.read(1).astype(float)
         bounds = src.bounds
-        src_crs = src.crs
+        nodata = src.nodata
 
-        # 🔁 Transformar bounds a EPSG:4326
-        transformer = Transformer.from_crs(src_crs, "EPSG:4326", always_xy=True)
+    # Máscara de NoData
+    if nodata is not None:
+        mask = data == nodata
+    else:
+        mask = np.isnan(data)
 
-        west, south = transformer.transform(bounds.left, bounds.bottom)
-        east, north = transformer.transform(bounds.right, bounds.top)
+    # Normalización (ajusta rangos si quieres)
+    norm = Normalize(vmin=np.nanmin(data), vmax=np.nanmax(data))
+    cmap = cm.Reds  # ICC → rojos
 
-        # Crear imagen PNG
-        fig, ax = plt.subplots(figsize=(6, 6))
-        ax.imshow(data, cmap="Reds", vmin=0, vmax=60)
-        ax.axis("off")
+    rgba = cmap(norm(data))
+    rgba[..., 3] = np.where(mask, 0, opacity)  # 👉 transparencia real
 
-        buf = io.BytesIO()
-        plt.savefig(buf, format="png", bbox_inches="tight", pad_inches=0)
-        plt.close(fig)
-        buf.seek(0)
+    # Guardar PNG temporal con alpha
+    tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
+    plt.imsave(tmp.name, rgba)
 
-        img = base64.b64encode(buf.read()).decode("utf-8")
-        img_url = f"data:image/png;base64,{img}"
-        st.write("DEBUG bounds WGS84:", [[south, west], [north, east]])
+    # Añadir a Folium
+    folium.raster_layers.ImageOverlay(
+        image=tmp.name,
+        bounds=[[bounds.bottom, bounds.left], [bounds.top, bounds.right]],
+        name=name,
+        opacity=1.0,
+        interactive=True,
+        cross_origin=False,
+        zindex=5
+    ).add_to(m)
 
-
-        # Añadir overlay correctamente georreferenciado
-        folium.raster_layers.ImageOverlay(
-            image=img_url,
-            bounds=[[south, west], [north, east]],
-            name=name,
-            opacity=opacity,
-            interactive=True,
-            cross_origin=False
-        ).add_to(m)
 
 
 
@@ -641,6 +648,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
