@@ -26,6 +26,52 @@ RANGO_REDICCION_VULNERABILIDAD = (0.0, 25.0)
 RANGO_INDICE_VULNERABILIDAD = (0.0, 100.0)
 
 # =========================
+# TEXTOS EXPLICATIVOS
+# =========================
+
+TEXTO_VULNERABILIDAD = """
+**Índice de Vulnerabilidad**
+
+El índice mide la vulnerabilidad relativa a nivel de parcela, integrando factores como la contaminación atmosférica
+(NO₂, PM₂.₅, PM₁₀), la presencia de vegetación (zonas verdes de gran densidad o parques),
+las características demográficas asociadas a cada tipo de edificio y la cantidad de población expuesta.
+
+Las variables se normalizan y transforman para reflejar relaciones no lineales y se combinan de forma ponderada.
+El índice se expresa en una escala de 0 a 1 (re-escalada a 0–100 en el visor), donde valores más altos indican
+mayor vulnerabilidad.
+
+Este índice sirve para comparar parcelas dentro del barrio de la Rochapea y evaluar el impacto de estrategias
+de mitigación, como el aumento de vegetación, en los distintos escenarios (actual, ideal y prioritario)
+y a lo largo de las estaciones del año.
+"""
+
+TEXTO_ICC = """
+**Índice de Contaminación Combinado (ICC)**
+
+Los mapas de contaminación se han generado combinando información procedente de sensores,
+modelos CFD y estaciones de calidad del aire.
+
+Se consideran los contaminantes NO₂, PM₂.₅ y PM₁₀, que se integran mediante el
+Índice de Contaminación Combinado (ICC), definido como:
+
+ICC(e, v) = 0.5 · PM₂.₅(e, v) + 0.3 · NO₂(e, v) + 0.2 · PM₁₀(e, v)
+
+donde *e* representa la estación del año y *v* la parcela.
+Valores más altos indican una mayor carga contaminante.
+"""
+
+TEXTO_REDICCION = """
+**Reducción del indicador**
+
+Las variables de reducción representan el cambio porcentual respecto al escenario actual,
+como consecuencia de la incorporación de nuevas zonas verdes y arbolado.
+
+Valores más altos indican una mayor mejora ambiental asociada a la estrategia de vegetación
+implementada en cada escenario.
+"""
+
+
+# =========================
 # MAPEO DE COLUMNAS – REDUCCIÓN ÍNDICE DE VULNERABILIDAD
 # =========================
 
@@ -333,12 +379,22 @@ if modo == "Simulación de escenarios":
 # =========================
 st.markdown(f"### {col}")
 
+if variable == "Índice de Vulnerabilidad":
+    st.info(TEXTO_VULNERABILIDAD)
+
+elif variable == "Índice de contaminación (ICC)":
+    st.info(TEXTO_ICC)
+
+elif "Reducción" in variable:
+    st.info(TEXTO_REDICCION)
+
 st_folium(
     m,
     width=1200,
     height=650,
     returned_objects=[]
 )
+
 
 
 
