@@ -418,6 +418,11 @@ if modo == "Simulación de escenarios":
 else:
 
     st.sidebar.header("DEMOGRAFÍA Y CATASTRO")
+    base_map = st.sidebar.selectbox(
+        "Mapa base",
+        ["OpenStreetMap", "CartoDB Positron", "Sin mapa base"]
+    )
+
 
     demog_vars = {
         "Número de viviendas": "NViviendas",
@@ -473,12 +478,26 @@ else:
         center = gdf.geometry.centroid
         m = folium.Map(
             location=[center.y.mean(), center.x.mean()],
-            zoom_start=14,
+            zoom_start=16,
             tiles=None
         )
 
-        folium.TileLayer("openstreetmap", name="OpenStreetMap").add_to(m)
-        folium.TileLayer("cartodbpositron", name="CartoDB Positron").add_to(m)
+        if base_map == "OpenStreetMap":
+            folium.TileLayer(
+                "openstreetmap",
+                name="OpenStreetMap",
+                control=True
+            ).add_to(m)
+    
+        elif base_map == "CartoDB Positron":
+            folium.TileLayer(
+                "cartodbpositron",
+                name="CartoDB Positron",
+                control=True
+            ).add_to(m)
+    
+
+
 
         def style_function(feature):
             val = feature["properties"].get(col)
@@ -515,6 +534,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
