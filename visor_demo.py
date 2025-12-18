@@ -412,7 +412,109 @@ if modo == "Simulación de escenarios":
         returned_objects=[]
     )
 
+# ============================================================
+# ============ MODO 2: DEMOGRAFÍA Y CATASTRO =================
+# ============================================================
+else:
 
+    st.sidebar.header("DEMOGRAFÍA Y CATASTRO")
+
+    demog_vars = {
+        "Número de viviendas": "NViviendas",
+        "Población masculina": "Hombres_es",
+        "Población femenina": "Mujeres_es",
+        "Hombres de 0 a 17 años": "H_0_17_est",
+        "Mujeres de 0 a 17 años": "M_0_17_est",
+        "Hombres de 18 a 64 años": "H_18_64_es",
+        "Mujeres de 18 a 64 años": "M_18_64_es",
+        "Hombres de 65 años o más": "H_65p_esti",
+        "Mujeres de 65 años o más": "M_65p_esti",
+        "Población total": "Poblacion_",
+        "Afluencia estimada de personas": "Afluencia",
+        "Tipología del edificio (uso)": "USO"
+    }
+
+    demog_vars = {k: v for k, v in demog_vars.items() if v in gdf.columns}
+
+    var_label = st.sidebar.selectbox(
+        "Variable demográfica / catastral",
+        list(demog_vars.keys())
+    )
+
+    col = demog_vars[var_label]
+
+    # =========================
+    # MAPA DEMOGRAFÍA
+    # =========================
+    if col == "USO":
+        # Categórico
+        m = gdf.explore(
+            column="USO",
+            categorical=True,
+            cmap="Set3",
+            tooltip=["USO"],
+            tiles="openstreetmap",
+            legend=True
+        )
+
+    else:
+        # Numérico
+        values = gdf[col].dropna()
+
+        vmin = float(values.min())
+        vmax = float(values.max())
+
+        colormap = cm.LinearColormap(
+            cm.linear.Blues_09.colors,
+            vmin=vmin,
+            vmax=vmax
+        )
+
+        center = gdf.geometry.centroid
+        m = folium.Map(
+            location=[center.y.mean(), center.x.mean()],
+            zoom_start=14,
+            tiles=None
+        )
+
+        folium.TileLayer("openstreetmap", name="OpenStreetMap").add_to(m)
+        folium.TileLayer("cartodbpositron", name="CartoDB Positron").add_to(m)
+
+        def style_function(feature):
+            val = feature["properties"].get(col)
+            if val is None:
+                return {"fillOpacity": 0, "weight": 0}
+            return {
+                "fill": True,
+                "fillColor": colormap(val),
+                "color": "#333333",
+                "weight": 0.3,
+                "fillOpacity": 0.8,
+            }
+
+        folium.GeoJson(
+            gdf,
+            name="Parcelas",
+            style_function=style_function,
+            tooltip=folium.GeoJsonTooltip(
+                fields=["USO", col],
+                aliases=["Tipología del edificio", var_label],
+                localize=True
+            )
+        ).add_to(m)
+
+        colormap.add_to(m)
+        folium.LayerControl(collapsed=False).add_to(m)
+
+    # =========================
+    # MOSTRAR MAPA DEMOGRAFÍA
+    # =========================
+    st_folium(
+        m,
+        width=1200,
+        height=650,
+        returned_objects=[]
+    )
 
 
 
