@@ -163,6 +163,9 @@ def add_icc_raster_to_map(
     Añade un raster TIFF (EPSG:32630) reproyectado a EPSG:4326
     como ImageOverlay en un mapa Folium.
     """
+    import streamlit as st
+    st.error("🚨 ENTRANDO EN add_icc_raster_to_map")
+
 
     with rasterio.open(raster_path) as src:
 
@@ -205,16 +208,10 @@ def add_icc_raster_to_map(
         # =========================
         # Crear RGBA
         # =========================
-        rgba = np.zeros((norm.shape[0], norm.shape[1], 4), dtype=np.float32)
+        rgba = np.zeros((data.shape[0], data.shape[1], 4), dtype=np.float32)
+        rgba[..., 0] = 1.0   # rojo puro
+        rgba[..., 3] = 1.0   # opacidad total
 
-        if colormap == "reds":
-            rgba[..., 0] = norm          # rojo
-        elif colormap == "greens":
-            rgba[..., 1] = norm          # verde
-        elif colormap == "blues":
-            rgba[..., 2] = norm          # azul
-
-        rgba[..., 3] = norm * 0.9        # alpha proporcional
 
         # =========================
         # Bounds reproyectados
@@ -241,6 +238,7 @@ def add_icc_raster_to_map(
         ).add_to(m)
 
         # Ajustar vista
+        st.info(f"Raster bounds (latlon): {folium_bounds}")
         m.fit_bounds(folium_bounds)
 
 
@@ -442,6 +440,7 @@ if modo == "Simulación de escenarios":
         if raster_path is None:
             st.warning("No hay raster ICC para esta estación.")
         else:
+            st.warning(f"Escenario={escenario} | Variable={variable} | Estación={estacion}")
             add_icc_raster_to_map(
                 m,
                 raster_path,
@@ -699,6 +698,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
