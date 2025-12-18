@@ -599,14 +599,21 @@ if modo == "Simulación de escenarios":
         st.info(TEXTO_REDUCCION_ICC)
 
     # =========================
-    # MOSTRAR MAPA
+    # LAYOUT: MAPA + INFO
     # =========================
-    map_data = st_folium(
-        m,
-        width=1200,
-        height=650,
-        returned_objects=["last_clicked"]
-    )
+    col_map, col_info = st.columns([3, 1])  # 75% mapa, 25% info
+    
+    with col_map:
+        map_data = st_folium(
+            m,
+            width=900,
+            height=650,
+            returned_objects=["last_clicked"]
+        )
+    
+    with col_info:
+        st.markdown("### Información del punto")
+
     # =========================
     # LECTURA DEL VALOR ICC AL HACER CLICK
     # =========================
@@ -640,11 +647,12 @@ if modo == "Simulación de escenarios":
                     value = src.read(1)[row, col]
     
                     if np.isfinite(value):
-                        st.info(
-                            f"📍 **ICC a nivel de calle**\n\n"
-                            f"Estación: **{estacion}**\n\n"
-                            f"Valor ICC: **{value:.2f}**"
-                        )
+                        with col_info:
+                            st.success(
+                                f"📍 **ICC a nivel de calle**\n\n"
+                                f"**Estación:** {estacion}\n\n"
+                                f"**Valor ICC:** {value:.2f}"
+                            )
                     else:
                         st.warning("No hay valor ICC en este punto.")
     
@@ -783,6 +791,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
