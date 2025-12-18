@@ -410,12 +410,17 @@ if modo == "Simulación de escenarios":
             "fillOpacity": 0.8,
         }
 
-    folium.GeoJson(
-        gdf,
-        name="Parcelas",
-        style_function=style_function,
-        tooltip=folium.GeoJsonTooltip(fields=[col], localize=True)
-    ).add_to(m)
+    # =========================
+    # CAPA DE PARCELAS (solo si NO es ICC raster)
+    # =========================
+    if not (escenario == "Actual" and variable == "ICC a nivel de calle"):
+        folium.GeoJson(
+            gdf,
+            name="Parcelas",
+            style_function=style_function,
+            tooltip=folium.GeoJsonTooltip(fields=[col], localize=True)
+        ).add_to(m)
+
 
     # =========================
     # VEGETACIÓN
@@ -617,6 +622,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
