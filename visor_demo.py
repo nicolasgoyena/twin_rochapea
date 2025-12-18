@@ -40,9 +40,8 @@ Las variables se normalizan y transforman para reflejar relaciones no lineales y
 El índice se expresa en una escala de 0 a 1 (re-escalada a 0–100 en el visor), donde valores más altos indican
 mayor vulnerabilidad.
 
-Este índice sirve para comparar parcelas dentro del barrio de la Rochapea y evaluar el impacto de estrategias
-de mitigación, como el aumento de vegetación, en los distintos escenarios (actual, ideal y prioritario)
-y a lo largo de las estaciones del año.
+Este índice permite comparar parcelas dentro del barrio de la Rochapea y evaluar el impacto de estrategias
+de mitigación en los distintos escenarios (actual, ideal y prioritario) y estaciones del año.
 """
 
 TEXTO_ICC = """
@@ -60,15 +59,28 @@ donde *e* representa la estación del año y *v* la parcela.
 Valores más altos indican una mayor carga contaminante.
 """
 
-TEXTO_REDICCION = """
-**Reducción del indicador**
+TEXTO_REDUCCION_VULNERABILIDAD = """
+**Reducción del Índice de Vulnerabilidad**
 
-Las variables de reducción representan el cambio porcentual respecto al escenario actual,
-como consecuencia de la incorporación de nuevas zonas verdes y arbolado.
+Esta variable representa la reducción porcentual del índice de vulnerabilidad
+respecto al escenario actual, como consecuencia de la incorporación de nuevas zonas verdes
+y arbolado en los escenarios ideal y prioritario.
 
-Valores más altos indican una mayor mejora ambiental asociada a la estrategia de vegetación
-implementada en cada escenario.
+Valores más altos indican una mayor disminución de la vulnerabilidad, asociada a una mejora
+en las condiciones ambientales y sociales de la parcela, en función de la estación del año.
 """
+
+TEXTO_REDUCCION_ICC = """
+**Reducción del Índice de Contaminación (ICC)**
+
+Esta variable representa la reducción porcentual del Índice de Contaminación Combinado (ICC)
+respecto al escenario actual, derivada de la implementación de nuevas zonas verdes
+y arbolado en los escenarios ideal y prioritario.
+
+Valores más altos indican una mayor reducción de la carga contaminante atmosférica
+(NO₂, PM₂.₅ y PM₁₀) asociada a la estrategia de vegetación considerada.
+"""
+
 
 
 # =========================
@@ -385,8 +397,12 @@ if variable == "Índice de Vulnerabilidad":
 elif variable == "Índice de contaminación (ICC)":
     st.info(TEXTO_ICC)
 
-elif "Reducción" in variable:
-    st.info(TEXTO_REDICCION)
+elif variable == "Reducción del índice de Vulnerabilidad":
+    st.info(TEXTO_REDUCCION_VULNERABILIDAD)
+
+elif variable == "Reducción del índice de contaminación (ICC)":
+    st.info(TEXTO_REDUCCION_ICC)
+
 
 st_folium(
     m,
@@ -394,6 +410,7 @@ st_folium(
     height=650,
     returned_objects=[]
 )
+
 
 
 
