@@ -8,6 +8,12 @@ import geopandas as gpd
 import folium
 from streamlit_folium import st_folium
 import branca.colormap as cm
+import rasterio
+from rasterio.plot import reshape_as_image
+import matplotlib.pyplot as plt
+import io
+import base64
+
 
 # =========================
 # CONFIG
@@ -17,6 +23,14 @@ LAYER_NAME = "parcelas_rochapea"
 
 ZONAS_VERDES_PATH = "simulacion_zonas_verdes_rochapea_RECUPERADA.shp"
 ARBOLES_PATH = "arboles_propuestos.shp"
+ICC_RASTERS = {
+    "Invierno": "ICC_invierno.tif",
+    "Primavera": "ICC_primavera.tif",
+    "Verano": "ICC_verano.tif",
+    "Otoño": "ICC_otono.tif",
+    "Media anual": "ICC_anual.tif"
+}
+
 
 MAP_CRS = 4326
 
@@ -131,6 +145,35 @@ def load_vegetation():
 
 gdf = load_data()
 zonas_verdes, arboles = load_vegetation()
+
+def add_raster_layer(m, raster_path, name, opacity=0.7):
+    with rasterio.open(raster_path) as src:
+        data = src.read(1)
+        bounds = src.bounds
+
+        # Normalizar para visualización
+        fig, ax = plt.subplots(figsize=(6, 6))
+        ax.imshow(data, cmap="Reds")
+        ax.axis("off")
+
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", bbox_inches="tight", pad_inches=0)
+        plt.close(fig)
+        buf.seek(0)
+
+        img = base64.b64encode(buf.read()).decode("utf-8")
+        img_url = f"data:image/png;base64,{img}"
+
+        folium.raster_layers.ImageOverlay(
+            image=img_url,
+            bounds=[[bounds.bottom, bounds.left], [bounds.top, bounds.right]],
+            name=name,
+            opacity=opacity,
+            interactive=True,
+            cross_origin=False,
+            zindex=2
+        ).add_to(m)
+
 
 # =========================
 # SIDEBAR – MODO PRINCIPAL
@@ -316,6 +359,20 @@ if modo == "Simulación de escenarios":
         zoom_start=16,
         tiles=None
     )
+    # =========================
+    # CAPA RASTER ICC (solo escenario actual)
+    # =========================
+    if escenario == "Actual" and variable == "ICC":
+        raster_path = ICC_RASTERS.get(estacion)
+    
+        if raster_path is not None:
+            add_raster_layer(
+                m,
+                raster_path=raster_path,
+                name=f"ICC {estacion} (nivel de calle)",
+                opacity=0.75
+            )
+
 
     folium.TileLayer(
             tiles="about:blank",
@@ -561,6 +618,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
