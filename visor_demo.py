@@ -457,7 +457,6 @@ if modo == "Simulación de escenarios":
         if raster_path is None:
             st.warning("No hay raster ICC para esta estación.")
         else:
-            st.warning(f"Escenario={escenario} | Variable={variable} | Estación={estacion}")
             add_icc_raster_to_map(
                 m,
                 raster_path,
@@ -784,6 +783,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
