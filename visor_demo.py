@@ -159,8 +159,8 @@ def add_raster_layer(m, raster_path, name, opacity=0.7):
     import os
 
     with rasterio.open(raster_path) as src:
-    data = src.read(1).astype(float)
-    bounds = src.bounds
+        data = src.read(1).astype(float)
+        bounds = src.bounds
 
     # Máscara: fondo = valor mínimo
     background_value = np.nanmin(data)
@@ -646,6 +646,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
