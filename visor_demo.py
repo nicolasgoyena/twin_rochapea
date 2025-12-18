@@ -159,19 +159,14 @@ def add_icc_raster_to_map(
     layer_name="ICC (nivel de calle)",
     colormap="reds"
 ):
-    """
-    Añade un raster TIFF (EPSG:32630) reproyectado a EPSG:4326
-    como ImageOverlay en un mapa Folium.
-    """
+    import rasterio
+    import numpy as np
+    from rasterio.warp import calculate_default_transform, reproject, Resampling
+    import folium
     import streamlit as st
-    st.error("🚨 ENTRANDO EN add_icc_raster_to_map")
-
 
     with rasterio.open(raster_path) as src:
 
-        # =========================
-        # Reproyección a EPSG:4326
-        # =========================
         dst_crs = "EPSG:4326"
 
         transform, width, height = calculate_default_transform(
@@ -195,26 +190,40 @@ def add_icc_raster_to_map(
         )
 
         # =========================
-        # Limpieza de datos
+        # MÁSCARA CORRECTA
         # =========================
-        data = np.ma.masked_invalid(data)
+        data = np.array(data)
 
-        vmin = data.min()
-        vmax = data.max()
+        # Definir rango válido real
+        valid_mask = (data > 0) & np.isfinite(data)
 
-        # Normalización 0–1
-        norm = (data - vmin) / (vmax - vmin)
+        if not valid_mask.any():
+            st.warning("Raster sin valores válidos")
+            return
+
+        vmin = data[valid_mask].min()
+        vmax = data[valid_mask].max()
+
+        norm = np.zeros_like(data, dtype=np.float32)
+        norm[valid_mask] = (data[valid_mask] - vmin) / (vmax - vmin)
 
         # =========================
-        # Crear RGBA
+        # RGBA
         # =========================
         rgba = np.zeros((data.shape[0], data.shape[1], 4), dtype=np.float32)
-        rgba[..., 0] = 1.0   # rojo puro
-        rgba[..., 3] = 1.0   # opacidad total
 
+        if colormap == "reds":
+            rgba[..., 0] = norm
+        elif colormap == "greens":
+            rgba[..., 1] = norm
+        elif colormap == "blues":
+            rgba[..., 2] = norm
+
+        # ALPHA SOLO DONDE HAY DATOS
+        rgba[..., 3] = np.where(valid_mask, norm * 0.9, 0.0)
 
         # =========================
-        # Bounds reproyectados
+        # Bounds
         # =========================
         bounds = rasterio.transform.array_bounds(
             height, width, transform
@@ -225,21 +234,24 @@ def add_icc_raster_to_map(
             [bounds[3], bounds[2]]   # north, east
         ]
 
-        # =========================
-        # Añadir raster al mapa
-        # =========================
+        fg = folium.FeatureGroup(
+            name=layer_name,
+            overlay=True,
+            control=True,
+            show=True
+        )
+
         folium.raster_layers.ImageOverlay(
             image=rgba,
             bounds=folium_bounds,
-            name=layer_name,
             opacity=1.0,
-            interactive=True,
-            cross_origin=False
-        ).add_to(m)
+            interactive=True
+        ).add_to(fg)
 
-        # Ajustar vista
-        st.info(f"Raster bounds (latlon): {folium_bounds}")
+        fg.add_to(m)
+
         m.fit_bounds(folium_bounds)
+
 
 
 # =========================
@@ -698,6 +710,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
