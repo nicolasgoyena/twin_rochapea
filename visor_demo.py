@@ -467,9 +467,10 @@ else:
             categorical=True,
             cmap="Set3",
             tooltip=["USO"],
-            tiles="openstreetmap",
+            tiles="cartodbpositron",
             legend=True
         )
+
 
     else:
         # Numérico
@@ -560,6 +561,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
