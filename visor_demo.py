@@ -482,19 +482,22 @@ else:
             tiles=None
         )
 
-        if base_map == "OpenStreetMap":
-            folium.TileLayer(
-                "openstreetmap",
-                name="OpenStreetMap",
-                control=True
-            ).add_to(m)
+        # =========================
+        # MAPAS BASE (igual que escenarios)
+        # =========================
+        folium.TileLayer(
+            tiles="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=",
+            attr=" ",
+            name="Sin mapa base",
+            overlay=False
+        ).add_to(m)
     
-        elif base_map == "CartoDB Positron":
-            folium.TileLayer(
-                "cartodbpositron",
-                name="CartoDB Positron",
-                control=True
-            ).add_to(m)
+        folium.TileLayer(
+            "cartodbpositron",
+            name="CartoDB Positron",
+            overlay=False
+        ).add_to(m)
+
     
 
 
@@ -534,6 +537,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
