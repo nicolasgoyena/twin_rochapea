@@ -459,6 +459,17 @@ if modo == "Simulación de escenarios":
                 layer_name=f"ICC {estacion} (nivel de calle)",
                 colormap="reds"
             )
+        icc_min = 0
+        icc_max = 60   # o el rango que hayas decidido
+    
+        icc_colormap = cm.LinearColormap(
+            colors=cm.linear.Reds_09.colors,
+            vmin=icc_min,
+            vmax=icc_max,
+            caption="ICC a nivel de calle (0–60)"
+        )
+    
+        icc_colormap.add_to(m)
 
 
 
@@ -553,7 +564,19 @@ if modo == "Simulación de escenarios":
     # =========================
     # TÍTULO Y TEXTO EXPLICATIVO
     # =========================
-    st.markdown(f"### {col}")
+    if escenario == "Actual" and variable == "ICC a nivel de calle":
+        st.markdown(
+            "## ICC a nivel de calle – "
+            f"{estacion} (escenario Actual)"
+        )
+    elif variable == "Índice de Vulnerabilidad":
+        st.markdown(
+            f"## Índice de Vulnerabilidad en {estacion} "
+            f"en el escenario {escenario} (0–100)"
+        )
+    else:
+        st.markdown(f"## {col}")
+
 
     if variable == "Índice de Vulnerabilidad":
         st.info(TEXTO_VULNERABILIDAD)
@@ -710,6 +733,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
