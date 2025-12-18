@@ -564,8 +564,12 @@ if modo == "Simulación de escenarios":
                 )
             )
         fg.add_to(m)
-    colormap.add_to(m)
+    # Añadir colormap SOLO si existe (parcelas)
+    if colormap is not None:
+        colormap.add_to(m)
+    
     folium.LayerControl(collapsed=False).add_to(m)
+
     # =========================
     # TÍTULO Y TEXTO EXPLICATIVO
     # =========================
@@ -738,6 +742,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
