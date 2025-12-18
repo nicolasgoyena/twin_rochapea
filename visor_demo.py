@@ -158,9 +158,9 @@ def add_raster_layer(m, raster_path, name, opacity=0.7):
     import tempfile
     import os
 
-   with rasterio.open(raster_path) as src:
-    data = src.read(1).astype(float)
-    bounds = src.bounds
+    with rasterio.open(raster_path) as src:
+        data = src.read(1).astype(float)
+        bounds = src.bounds
 
     # Normalización ICC
     norm = Normalize(vmin=0, vmax=60)
@@ -645,6 +645,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
