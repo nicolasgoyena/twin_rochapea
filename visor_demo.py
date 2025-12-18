@@ -362,7 +362,7 @@ if modo == "Simulación de escenarios":
     # =========================
     # CAPA RASTER ICC (solo escenario actual)
     # =========================
-    if escenario == "Actual" and variable == "ICC":
+    if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
         raster_path = ICC_RASTERS.get(estacion)
     
         if raster_path is not None:
@@ -618,6 +618,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
