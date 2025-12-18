@@ -262,10 +262,7 @@ def add_icc_raster_to_map(
         fg.add_to(m)
 
         m.fit_bounds(folium_bounds)
-        st.write("Raster CRS:", raster_crs)
-        st.write("Raster transform:", raster_transform)
-        st.write("Lat/Lon clic:", lat, lon)
-        st.write("Pixel row/col:", row, col)
+
 
 
 
@@ -812,6 +809,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
