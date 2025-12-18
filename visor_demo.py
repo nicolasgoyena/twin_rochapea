@@ -318,11 +318,25 @@ if modo == "Simulación de escenarios":
     )
 
     folium.TileLayer(
-        tiles="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=",
-        attr=" ",
-        name="Sin mapa base",
-        overlay=False
-    ).add_to(m)
+            tiles="about:blank",
+            attr=" ",
+            name="Sin mapa base",
+            overlay=False,
+            control=True,
+            show=True
+        ).add_to(m)
+        
+    m.get_root().html.add_child(
+            folium.Element(
+                """
+                <style>
+                .leaflet-container {
+                    background: #f5f5f5;
+                }
+                </style>
+                """
+            )
+    )
 
     folium.TileLayer("cartodbpositron", name="CartoDB Positron").add_to(m)
 
@@ -546,6 +560,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
