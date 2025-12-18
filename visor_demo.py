@@ -13,6 +13,7 @@ from rasterio.plot import reshape_as_image
 import matplotlib.pyplot as plt
 import io
 import base64
+from pyproj import Transformer
 
 
 # =========================
@@ -146,14 +147,22 @@ def load_vegetation():
 gdf = load_data()
 zonas_verdes, arboles = load_vegetation()
 
-def add_raster_layer(m, raster_path, name, opacity=0.7):
+def add_raster_layer(m, raster_path, name, opacity=0.75):
+
     with rasterio.open(raster_path) as src:
         data = src.read(1)
         bounds = src.bounds
+        src_crs = src.crs
 
-        # Normalizar para visualización
+        # 🔁 Transformar bounds a EPSG:4326
+        transformer = Transformer.from_crs(src_crs, "EPSG:4326", always_xy=True)
+
+        west, south = transformer.transform(bounds.left, bounds.bottom)
+        east, north = transformer.transform(bounds.right, bounds.top)
+
+        # Crear imagen PNG
         fig, ax = plt.subplots(figsize=(6, 6))
-        ax.imshow(data, cmap="Reds")
+        ax.imshow(data, cmap="Reds", vmin=0, vmax=60)
         ax.axis("off")
 
         buf = io.BytesIO()
@@ -164,15 +173,16 @@ def add_raster_layer(m, raster_path, name, opacity=0.7):
         img = base64.b64encode(buf.read()).decode("utf-8")
         img_url = f"data:image/png;base64,{img}"
 
+        # Añadir overlay correctamente georreferenciado
         folium.raster_layers.ImageOverlay(
             image=img_url,
-            bounds=[[bounds.bottom, bounds.left], [bounds.top, bounds.right]],
+            bounds=[[south, west], [north, east]],
             name=name,
             opacity=opacity,
             interactive=True,
-            cross_origin=False,
-            zindex=2
+            cross_origin=False
         ).add_to(m)
+
 
 
 # =========================
@@ -622,6 +632,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
