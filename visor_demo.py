@@ -158,20 +158,19 @@ def add_raster_layer(m, raster_path, name, opacity=0.7):
     import tempfile
     import os
 
-    with rasterio.open(raster_path) as src:
-        data = src.read(1).astype(float)
-        bounds = src.bounds
+   with rasterio.open(raster_path) as src:
+    data = src.read(1).astype(float)
+    bounds = src.bounds
 
-    # Máscara: fondo = valor mínimo
-    background_value = np.nanmin(data)
-    mask = data == background_value
-    
-    # Normalización fija ICC (ajusta si quieres)
+    # Normalización ICC
     norm = Normalize(vmin=0, vmax=60)
     cmap = cm.Reds
     
     rgba = cmap(norm(data))
-    rgba[..., 3] = np.where(mask, 0, 0.7)  # fondo transparente
+    
+    # 🔑 SOLO transparente donde el valor sea 0
+    rgba[..., 3] = np.where(data == 0, 0.0, 0.9)
+
 
 
     # Guardar PNG temporal con alpha
@@ -646,6 +645,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
