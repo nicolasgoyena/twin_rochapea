@@ -482,19 +482,29 @@ else:
             tiles=None
         )
 
-        # =========================
-        # MAPAS BASE (igual que escenarios)
-        # =========================
         folium.TileLayer(
-            tiles=(
-                "data:image/png;base64,"
-                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNg"
-                "+P///wAAAwIB/2X6cQAAAABJRU5ErkJggg=="
-            ),
-            attr=" ",
+            tiles="",
+            attr="",
             name="Sin mapa base (gris claro)",
-            overlay=False
+            overlay=False,
+            control=True,
+            show=True,
+            max_zoom=22,
+            min_zoom=0
         ).add_to(m)
+        
+        m.get_root().html.add_child(
+            folium.Element(
+                """
+                <style>
+                .leaflet-container {
+                    background: #f5f5f5;
+                }
+                </style>
+                """
+            )
+        )
+        
 
     
         folium.TileLayer(
@@ -542,6 +552,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
