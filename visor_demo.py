@@ -172,6 +172,8 @@ def add_raster_layer(m, raster_path, name, opacity=0.75):
 
         img = base64.b64encode(buf.read()).decode("utf-8")
         img_url = f"data:image/png;base64,{img}"
+        st.write("DEBUG bounds WGS84:", [[south, west], [north, east]])
+
 
         # Añadir overlay correctamente georreferenciado
         folium.raster_layers.ImageOverlay(
@@ -383,6 +385,11 @@ if modo == "Simulación de escenarios":
                 name=f"ICC {estacion} (nivel de calle)",
                 opacity=0.75
             )
+            m.add_child(folium.Marker(
+                location=[center.y.mean(), center.x.mean()],
+                popup="Raster añadido aquí"
+            ))
+
 
 
     folium.TileLayer(
@@ -632,6 +639,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
