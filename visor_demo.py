@@ -602,12 +602,54 @@ if modo == "Simulación de escenarios":
     # =========================
     # MOSTRAR MAPA
     # =========================
-    st_folium(
+    map_data = st_folium(
         m,
         width=1200,
         height=650,
-        returned_objects=[]
+        returned_objects=["last_clicked"]
     )
+    # =========================
+    # LECTURA DEL VALOR ICC AL HACER CLICK
+    # =========================
+    if (
+        escenario == "Actual"
+        and variable == "ICC a nivel de calle"
+        and map_data
+        and map_data.get("last_clicked") is not None
+    ):
+        lat = map_data["last_clicked"]["lat"]
+        lon = map_data["last_clicked"]["lng"]
+    
+        import rasterio
+        from rasterio.warp import transform
+    
+        raster_path = ICC_RASTERS.get(estacion)
+    
+        if raster_path is not None:
+            with rasterio.open(raster_path) as src:
+                # transformar lat/lon → CRS del raster
+                xs, ys = transform(
+                    "EPSG:4326",
+                    src.crs,
+                    [lon],
+                    [lat]
+                )
+    
+                row, col = src.index(xs[0], ys[0])
+    
+                if 0 <= row < src.height and 0 <= col < src.width:
+                    value = src.read(1)[row, col]
+    
+                    if np.isfinite(value):
+                        st.info(
+                            f"📍 **ICC a nivel de calle**\n\n"
+                            f"Estación: **{estacion}**\n\n"
+                            f"Valor ICC: **{value:.2f}**"
+                        )
+                    else:
+                        st.warning("No hay valor ICC en este punto.")
+    
+
 
 # ============================================================
 # ============ MODO 2: DEMOGRAFÍA Y CATASTRO =================
@@ -742,6 +784,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
