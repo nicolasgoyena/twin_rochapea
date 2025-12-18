@@ -147,61 +147,101 @@ def load_vegetation():
 gdf = load_data()
 zonas_verdes, arboles = load_vegetation()
 
-def add_raster_layer(m, raster_path, name, opacity=0.7):
+import rasterio
+import numpy as np
+from rasterio.warp import calculate_default_transform, reproject, Resampling
+import folium
 
-    import rasterio
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from matplotlib import cm
-    from matplotlib.colors import Normalize
-    from rasterio.plot import reshape_as_image
-    import tempfile
-    import os
+
+def add_icc_raster_to_map(
+    m,
+    raster_path,
+    layer_name="ICC (nivel de calle)",
+    colormap="reds"
+):
+    """
+    Añade un raster TIFF (EPSG:32630) reproyectado a EPSG:4326
+    como ImageOverlay en un mapa Folium.
+    """
 
     with rasterio.open(raster_path) as src:
-        data = src.read(1).astype(float)
-        bounds = src.bounds
 
-    st.write("Raster dtype:", data.dtype)
-    st.write("Raster shape:", data.shape)
-    st.write("Raster min:", float(np.nanmin(data)))
-    st.write("Raster max:", float(np.nanmax(data)))
-    st.write("Raster nodata:", src.nodata)
-    st.write("Raster CRS:", src.crs)
-    st.write("Raster bounds:", src.bounds)
-    st.write("GDF bounds:", gdf.total_bounds)
+        # =========================
+        # Reproyección a EPSG:4326
+        # =========================
+        dst_crs = "EPSG:4326"
 
+        transform, width, height = calculate_default_transform(
+            src.crs,
+            dst_crs,
+            src.width,
+            src.height,
+            *src.bounds
+        )
 
+        data = np.empty((height, width), dtype=np.float32)
 
+        reproject(
+            source=rasterio.band(src, 1),
+            destination=data,
+            src_transform=src.transform,
+            src_crs=src.crs,
+            dst_transform=transform,
+            dst_crs=dst_crs,
+            resampling=Resampling.bilinear
+        )
 
+        # =========================
+        # Limpieza de datos
+        # =========================
+        data = np.ma.masked_invalid(data)
 
-    # Normalización ICC
-    norm = Normalize(vmin=0, vmax=60)
-    cmap = cm.Reds
-    
-    rgba = cmap(norm(data))
-    
-    # 🔑 SOLO transparente donde el valor sea 0
-    rgba[..., 3] = np.where(data == 0, 0.0, 0.9)
+        vmin = data.min()
+        vmax = data.max()
 
+        # Normalización 0–1
+        norm = (data - vmin) / (vmax - vmin)
 
+        # =========================
+        # Crear RGBA
+        # =========================
+        rgba = np.zeros((norm.shape[0], norm.shape[1], 4), dtype=np.float32)
 
-    # Guardar PNG temporal con alpha
-    tmp = tempfile.NamedTemporaryFile(suffix=".png", delete=False)
-    plt.imsave(tmp.name, rgba)
+        if colormap == "reds":
+            rgba[..., 0] = norm          # rojo
+        elif colormap == "greens":
+            rgba[..., 1] = norm          # verde
+        elif colormap == "blues":
+            rgba[..., 2] = norm          # azul
 
-    # Añadir a Folium
-    folium.raster_layers.ImageOverlay(
-        image=tmp.name,
-        bounds=[[bounds.bottom, bounds.left], [bounds.top, bounds.right]],
-        name=name,
-        opacity=1.0,
-        interactive=True,
-        cross_origin=False,
-        zindex=5
-    ).add_to(m)
+        rgba[..., 3] = norm * 0.9        # alpha proporcional
 
+        # =========================
+        # Bounds reproyectados
+        # =========================
+        bounds = rasterio.transform.array_bounds(
+            height, width, transform
+        )
 
+        folium_bounds = [
+            [bounds[1], bounds[0]],  # south, west
+            [bounds[3], bounds[2]]   # north, east
+        ]
+
+        # =========================
+        # Añadir raster al mapa
+        # =========================
+        folium.raster_layers.ImageOverlay(
+            image=rgba,
+            bounds=folium_bounds,
+            name=layer_name,
+            opacity=1.0,
+            interactive=True,
+            cross_origin=False
+        ).add_to(m)
+
+        # Ajustar vista
+        m.fit_bounds(folium_bounds)
 
 
 # =========================
@@ -402,12 +442,13 @@ if modo == "Simulación de escenarios":
         if raster_path is None:
             st.warning("No hay raster ICC para esta estación.")
         else:
-            add_raster_layer(
+            add_icc_raster_to_map(
                 m,
-                raster_path=raster_path,
-                name=f"ICC {estacion} (nivel de calle)",
-                opacity=0.75
+                raster_path,
+                layer_name=f"ICC {estacion} (nivel de calle)",
+                colormap="reds"
             )
+
 
 
 
@@ -658,6 +699,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
