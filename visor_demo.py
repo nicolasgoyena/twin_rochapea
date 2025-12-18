@@ -375,20 +375,22 @@ if modo == "Simulación de escenarios":
     # =========================
     # CAPA RASTER ICC (solo escenario actual)
     # =========================
-    if escenario == "Actual" and variable == "Índice de contaminación (ICC)":
+    # =========================
+    # CAPA RASTER ICC A NIVEL DE CALLE
+    # =========================
+    if escenario == "Actual" and variable == "ICC a nivel de calle":
+    
         raster_path = ICC_RASTERS.get(estacion)
     
-        if raster_path is not None:
+        if raster_path is None:
+            st.warning("No hay raster ICC para esta estación.")
+        else:
             add_raster_layer(
                 m,
                 raster_path=raster_path,
                 name=f"ICC {estacion} (nivel de calle)",
                 opacity=0.75
             )
-            m.add_child(folium.Marker(
-                location=[center.y.mean(), center.x.mean()],
-                popup="Raster añadido aquí"
-            ))
 
 
 
@@ -639,6 +641,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
