@@ -385,11 +385,9 @@ if modo == "Simulación de escenarios":
         fg.add_to(m)
     colormap.add_to(m)
     folium.LayerControl(collapsed=False).add_to(m)
-
-# =========================
-# TÍTULO Y TEXTO EXPLICATIVO (solo escenarios)
-# =========================
-if modo == "Simulación de escenarios":
+    # =========================
+    # TÍTULO Y TEXTO EXPLICATIVO
+    # =========================
     st.markdown(f"### {col}")
 
     if variable == "Índice de Vulnerabilidad":
@@ -404,14 +402,20 @@ if modo == "Simulación de escenarios":
     elif variable == "Reducción del índice de contaminación (ICC)":
         st.info(TEXTO_REDUCCION_ICC)
 
+    # =========================
+    # MOSTRAR MAPA
+    # =========================
+    st_folium(
+        m,
+        width=1200,
+        height=650,
+        returned_objects=[]
+    )
 
 
-st_folium(
-    m,
-    width=1200,
-    height=650,
-    returned_objects=[]
+
 )
+
 
 
 
