@@ -414,9 +414,6 @@ if modo == "Simulación de escenarios":
 
 
 
-)
-
-
 
 
 
