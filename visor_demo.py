@@ -162,6 +162,19 @@ def add_raster_layer(m, raster_path, name, opacity=0.7):
         data = src.read(1).astype(float)
         bounds = src.bounds
 
+    st.write("Raster dtype:", data.dtype)
+    st.write("Raster shape:", data.shape)
+    st.write("Raster min:", float(np.nanmin(data)))
+    st.write("Raster max:", float(np.nanmax(data)))
+    st.write("Raster nodata:", src.nodata)
+    st.write("Raster CRS:", src.crs)
+    st.write("Raster bounds:", src.bounds)
+    st.write("GDF bounds:", gdf.total_bounds)
+
+
+
+
+
     # Normalización ICC
     norm = Normalize(vmin=0, vmax=60)
     cmap = cm.Reds
@@ -645,6 +658,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
