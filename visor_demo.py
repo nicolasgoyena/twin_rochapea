@@ -656,8 +656,7 @@ if modo == "Simulación de escenarios":
             row, col = rasterio.transform.rowcol(
                 raster_transform,
                 xs[0],
-                ys[0],
-                op=round
+                ys[0]
             )
 
             
@@ -811,6 +810,7 @@ else:
         height=650,
         returned_objects=[]
     )
+
 
 
 
